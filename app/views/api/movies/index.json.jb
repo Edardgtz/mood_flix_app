@@ -1,1 +1,14 @@
-@details
+
+@parsed_overview_movies.map do |title|
+  { 
+    title: title['title']['title'],
+    images: title['title']['image']['url'],
+    run_time: title['title']['runningTimeInMinutes'],
+    year: title['releaseDate'],
+    rating: title['certificates']['US'][0]['ratingReason'],
+    movie_rating: title['ratings']['rating'],
+    genres: title['genres'],
+    plot: title['plotOutline']['text']
+  }
+end
+

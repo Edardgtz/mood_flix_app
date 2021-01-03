@@ -43,3 +43,6 @@ gem 'rack-cors'
 gem 'jb'
 
 gem 'unirest'
+
+gem 'google-cloud-language'
+gem 'sentimental'
