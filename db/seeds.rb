@@ -1,206 +1,33 @@
 
+def select_all_unique_titles
+  @moods = Mood.all
+  @titles = []
+  @moods.each do |mood|
+    @titles << mood.title_id
+  end
+  @uniq_titles = @titles.uniq
+end
 
-# def call_api
-
-#   @genres = ['comedy', 'animation', 'adventure', 'horror', 'mystery', 'action', 'fantasy', 'scifi', 'romance', 'biography', 'crime', 'documentary', 'family', 'film-noir', 'history', 'musical', 'sport', 'thriller', 'war', 'western', 'drama']
-
-#   @moods = ['happy', 'sad',]
-
-#   require 'uri'
-#   require 'net/http'
-#   require 'json'
-#   require 'openssl'
-
-#   index = 0
-#   while index < @genres.length
-#     url = URI("https://imdb8.p.rapidapi.com/title/get-popular-movies-by-genre?genre=/chart/popular/genre/#{@genres[index]}")
-
-#     p "*-----------**-----------**-----------**-----------**-----------*"
-#     p @genres[index]
-#     p "*-----------**-----------**-----------**-----------**-----------*"
-
-#     http = Net::HTTP.new(url.host, url.port)
-#     http.use_ssl = true
-#     http.verify_mode = OpenSSL::SSL::VERIFY_NONE
-
-#     request = Net::HTTP::Get.new(url)
-#     request["x-rapidapi-key"] = "#{Rails.application.credentials.imdb_api[:api_key]}"
-#     request["x-rapidapi-host"] = 'imdb8.p.rapidapi.com'
-
-#     response = http.request(request)
-#     @details = JSON.parse(response.read_body)
+def call_sentiment(text_content)
     
-#     @title_ids = []
-#     i = 0
-#     while i < @details.length
-#       titles_split = @details[i].split ('/') 
-#       @title_ids << titles_split[2]
-#       i += 1
-#     end
+  language = Google::Cloud::Language.language_service
 
-#     i = 0
-#     while i < @title_ids.length
-#       if @genres[index] == "western"  || @genres[index] == "horror" || @genres[index] == "mystery" || @genres[index] == "scifi" || @genres[index] == "history" || @genres[index] == "sport" || @genres[index] == "war" || @genres[index] == "action" 
-#         i += 1
-#         break
-#       elsif @genres[index] == "adventure" || @genres[index] == "documentary" || @genres[index] == "fantasy" || @genres[index] == "romance" || @genres[index] == "family" || @genres[index] == "musical" || @genres[index] == "thriller" || @genres[index] == "animation" || @genres[index] == "comedy" || @genres[index] == "biography" || @genres[index] == "crime" || @genres[index] == "film-noir" || @genres[index] == "drama"
-#         mood = Mood.create(mood: @moods[1], title_id: @title_ids[i])
-#         i += 1
-#       end
-#       p mood
-#     end
-#     index += 1
-#   end
-# end
+  document = { content: text_content, type: :PLAIN_TEXT }
+  response = language.analyze_sentiment document: document
 
-# call_api()
+  sentiment = response.document_sentiment
 
+  # puts "Overall document sentiment: (#{sentiment.score})"
+  # puts "Sentence level sentiment:"
 
+  sentences = response.sentences
 
-
-# @moods = Mood.all
-# @titles = []
-# @moods.each do |mood|
-#   @titles << mood.title_id
-# end
-# uniq_titles = @titles.uniq
-
-# uniq_mood_titles = []
-# uniq_titles.each do |title|
-#   search_title = Mood.where(title_id: title)
-#   uniq_mood_titles << search_title[0]
-# end
-
-# @sad_titles = []
-# @happy_titles = []
-# uniq_mood_titles.each do |mood|
-#   if mood.mood == 'sad'
-#     @sad_titles << mood.title_id
-#   else
-#     @happy_titles << mood.title_id
-#   end
-# end
-
-# @moods = Mood.all
-# @sad_mood = []
-# @happy_mood = []
-# @moods.each do |mood|
-#   if mood.mood == 'sad'
-#     @sad_mood << mood
-#   else
-#     @happy_mood << mood
-#   end
-# end
-
-
-# p '*------------*------------*------------*------------*'
-# p'Line: 122'
-# p @happy_mood.length
-# p @sad_mood.length
-# p '*------------*------------*------------*------------*'
-
-# @happy_mood = @happy_mood.sort
-# @sad_mood = @sad_mood.sort
-
-# def call_plots
-#   @sad_mood.each do |mood|
-#     if mood.sentiment_score == nil
-#       require 'uri'
-#       require 'net/http'
-#       require 'openssl'
-#       require 'json'
-
-      
-
-#       url = URI("https://imdb8.p.rapidapi.com/title/get-plots?tconst=#{mood.title_id}")
-
-#       http = Net::HTTP.new(url.host, url.port)
-#       http.use_ssl = true
-#       http.verify_mode = OpenSSL::SSL::VERIFY_NONE
-
-#       request = Net::HTTP::Get.new(url)
-#       request["x-rapidapi-key"] = "#{Rails.application.credentials.imdb_api[:api_key]}"
-#       request["x-rapidapi-host"] = 'imdb8.p.rapidapi.com'
-
-#       response = http.request(request)
-#       unparsed_plots = response.read_body
-#       @plots = JSON.parse(unparsed_plots)
-
-#       #Confirm data
-#       # p '*------------*------------*------------*------------*'
-#       # p 'Line: 163'
-#       # p @plots['plots'][0]['text'].length
-#       # p @plots['plots'][0]['text']
-#       # p '*------------*------------*------------*------------*'
-#       #Parse plots
-#       i = 0
-#       @array_of_plots = []
-#       if @plots['plots'] == nil
-#         i += 1
-#       else
-#         while i < @plots['plots'].length
-#           p '*------------*------------*------------*------------*------------*'
-#           p 'Line: 175'
-#           p mood.id
-#           p mood.id
-#           p mood.id
-#           p @plots['plots'][i]['text']
-#           p '*------------*------------*------------*------------*------------*'
-          
-#           # String input to be analyzed
-#           text_content = @plots['plots'][i]['text']
-
-#           require "google/cloud/language"
-
-#           language = Google::Cloud::Language.language_service
-
-#           document = { content: text_content, type: :PLAIN_TEXT }
-#           response = language.analyze_sentiment document: document
-
-#           sentiment = response.document_sentiment
-
-#           # puts "Overall document sentiment: (#{sentiment.score})"
-#           # puts "Sentence level sentiment:"
-
-#           sentences = response.sentences
-
-#           sentences.each do |sentence|
-#             sentiment = sentence.sentiment
-#             @sentiment_score = "#{sentiment.score}"
-#             # {sentence.text.content}: 
-#           end
-#           @array_of_plots << @sentiment_score
-#           i += 1
-#         end
-#       end
-#       p '*------------*------------*------------*------------*'
-#       p @sentiment_score
-#       p 'Line: 207'
-#       p @array_of_plots
-#       p '*------------*------------*------------*------------*'
-
-#       @average_score = @array_of_plots.inject{ |sum, el| sum + el }.to_f / @array_of_plots.size
-#       p 'Before:'
-#       p '*------------*------------*------------*------------*'
-#       p mood
-#       p '*------------*------------*------------*------------*'
-#       mood.sentiment_score = @average_score
-#       mood.save
-#       p 'After:'
-#       p '*------------*------------*------------*------------*'
-#       p mood
-#       p '*------------*------------*------------*------------*'
-#       p @average_score
-#       p '*------------*------------*------------*------------*'
-#     end
-#   end
-#   p '*------------*------------*------------*------------*'
-#   p 'Line: 226'
-#   p @array_of_plots
-#   p '*------------*------------*------------*------------*'
-# end
-
-# call_plots()
+  sentences.each do |sentence|
+    sentiment = sentence.sentiment
+    @sentiment_score = "#{sentiment.score}"
+    # {sentence.text.content}: 
+  end
+end
 
 def call_entity(text_content)
   @title_entities = []
@@ -232,11 +59,10 @@ def find_unique_moods
     @titles << mood.title_id
   end
 
-  uniq_titles = @titles.uniq
-  sorted_uniq_titles = uniq_titles.sort
-
+  @uniq_titles = @titles.uniq
+  
   @uniq_moods = []
-  uniq_titles.each do |title_id|
+  @uniq_titles.each do |title_id|
     uniq_mood = Mood.find_by(title_id: title_id)
     @uniq_moods << uniq_mood
   end
@@ -260,19 +86,68 @@ def call_imdb(imdb_url)
   request["x-rapidapi-host"] = 'imdb8.p.rapidapi.com'
 
   response = http.request(request)
-  unparsed_plots = response.read_body
-  @plots = JSON.parse(unparsed_plots)
-  # pp @plots
+  unparsed_results = response.read_body
+  @results = JSON.parse(unparsed_results)
+  # pp @results
 end
 
+def retrieve_top_rated_titles
+  call_imdb("https://imdb8.p.rapidapi.com/title/get-top-rated-movies")
+  # pp @results
+  # p @results.length
+  @top_rated_title_ids = []
+  @results.each do |array|
+    # p array['id']
+    titles_split = array['id'].split ('/')
+    @top_rated_title_ids << titles_split[2]
+  end
+  p @top_rated_title_ids.length
+end
+
+def filter_out_duplicate_titles
+  retrieve_top_rated_titles()
+  select_all_unique_titles()
+  p @uniq_titles
+  @top_rated_uniq_titles = []
+  
+  @top_rated_title_ids.each do |top_rated_title_id|
+    dup = false
+    @uniq_titles.each do |uniq_mood_title_id|
+      if top_rated_title_id == uniq_mood_title_id
+        dup = true
+        p "#{top_rated_title_id} == #{uniq_mood_title_id} = Duplicate"
+      end
+    end
+    if dup == false
+      @top_rated_uniq_titles << top_rated_title_id
+    end
+  end
+  p @top_rated_uniq_titles.count
+end
+
+# filter_out_duplicate_titles()
+
+def find_unique_title_ids
+  mood = Mood.where(id: 2501..2647)
+  @uniq_mood_titles = []
+  mood.each do |mood|
+    @uniq_mood_titles << mood.title_id
+  end
+  p @uniq_mood_titles.length
+  p @uniq_mood_titles
+end
+
+# find_unique_title_ids()
+
 def seed_entities
-  
-  find_unique_moods()
-  
-  @uniq_moods.each do |mood|
-    
-    call_imdb("https://imdb8.p.rapidapi.com/title/get-plots?tconst=#{mood.title_id}")
-    
+  # find_unique_moods()
+  # filter_out_duplicate_titles()
+  find_unique_title_ids()
+
+  @uniq_mood_titles.each do |mood|
+    p mood
+    call_imdb("https://imdb8.p.rapidapi.com/title/get-plots?tconst=#{mood}")
+    @plots = @results
     p 'Line: 276'
     p @plots['plots'].length
     if @plots['plots'].length == 10
@@ -299,7 +174,7 @@ def seed_entities
   
     @title_entities.each do |entity|
       new_entity = Entity.create!(
-        title_id: mood.title_id, 
+        title_id: mood, 
         entity_name: entity[:name],
         entity_type: entity[:type]
       )
@@ -309,3 +184,56 @@ def seed_entities
 end
 
 seed_entities()
+
+
+
+def create_mood(title_id, sentiment_score)
+  @mood = Mood.create!(
+    title_id: title_id,
+    sentiment_score: sentiment_score)
+end
+
+def obtain_average_sentiment_score
+  i = 0
+  @array_of_plots = []
+  if @plots['plots'] == nil
+    i += 1
+  else
+    while i < @plots['plots'].length
+      call_sentiment(@plots['plots'][i]['text'])
+      p @plots['plots'][i]['text']
+      @array_of_plots << @sentiment_score
+      i += 1
+      p '*------------*------------*------------*'
+    end  
+    p '*------------*------------*------------*'
+    p 'Line: 239'
+    p @array_of_plots
+    p '*------------*------------*------------*'
+  end
+  @average_score = @array_of_plots.inject{ |sum, el| sum + el }.to_f / @array_of_plots.size
+end
+
+def seed_unique_top_rated_titles
+  filter_out_duplicate_titles()
+  p @top_rated_uniq_titles
+  @top_rated_uniq_titles.each do |top_rated_uniq_title|
+    p top_rated_uniq_title
+    @seed_title_id = top_rated_uniq_title
+    call_imdb("https://imdb8.p.rapidapi.com/title/get-plots?tconst=#{top_rated_uniq_title}")
+    @plots = @results
+
+    obtain_average_sentiment_score()
+
+    create_mood(@seed_title_id, @average_score)
+
+    p 'After:'
+    p '*------------*------------*------------*'
+    p @mood
+    p '*------------*------------*------------*'
+    p @average_score
+    p '*------------*------------*------------*'
+  end
+end
+
+# seed_unique_top_rated_titles()
