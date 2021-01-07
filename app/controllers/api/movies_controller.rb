@@ -158,14 +158,17 @@ class Api::MoviesController < ApplicationController
       p @entity_match
       @unique_titles = @entity_match.uniq
       p @unique_titles
-      # title1 = @entity_match.sample
-      # title2 = @entity_match.sample
-      # title3 = @entity_match.sample
-      # title4 = @entity_match.sample
-      # title5 = @entity_match.sample
+      title1 = @entity_match.sample
+      title2 = @entity_match.sample
+      title3 = @entity_match.sample
+      title4 = @entity_match.sample
+      title5 = @entity_match.sample
     end
-    # p selected_title
-    # request_similar_titles("https://movies-tvshows-data-imdb.p.rapidapi.com/?type=get-similar-movies&imdb=#{@title_id}")
+    # # p selected_title
+    # numbers = [1,2,3,4,5,6,7,8,9,10]
+    # rand = numbers.sample
+
+    # request_similar_titles("https://movies-tvshows-data-imdb.p.rapidapi.com/?type=get-similar-movies&imdb=#{@unique_titles[rand]}")
     
     # @parsed_movie = JSON.parse(@results)
 
@@ -193,7 +196,7 @@ class Api::MoviesController < ApplicationController
     # rand10 = zero_to_ninteen.sample
     # zero_to_ninteen.delete_if {|number| number == rand10 }
 
-    # @similar_title1 = @title_id
+    # @similar_title1 = @unique_titles[rand]
     # if @parsed_movie && @parsed_movie['movie_results'] &&@parsed_movie['movie_results'][rand2] && @parsed_movie['movie_results'][rand2]['imdb_id'] != []
     #   @similar_title2 = @parsed_movie['movie_results'][rand2]['imdb_id']
     # end
@@ -232,9 +235,9 @@ class Api::MoviesController < ApplicationController
   def call_overview
     call_similar_movies()
 
-    # titles = [@similar_title1, @similar_title2, @similar_title3, @similar_title4, @similar_title5, @similar_title6, @similar_title7, @similar_title8, @similar_title9, @similar_title10]
+    # titles = [@similar_title1, @title2, @title3, @similar_title4, @similar_title5, @similar_title6, @similar_title7, @similar_title8, @similar_title9, @similar_title10]
 
-    # titles = [@title1, @title2, @title3, @title4, @title5]
+    titles = [@title1, @title2, @title3, @title4, @title5]
     titles = @unique_titles.shuffle
 
     @parsed_overview_movies = []
@@ -250,7 +253,7 @@ class Api::MoviesController < ApplicationController
         @parsed_overview_movies << parsed_results
       end
 
-      if @parsed_overview_movies.length == 5
+      if @parsed_overview_movies.length == 6
         break
       end
       i += 1
