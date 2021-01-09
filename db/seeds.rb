@@ -186,7 +186,6 @@ end
 seed_entities()
 
 
-
 def create_mood(title_id, sentiment_score)
   @mood = Mood.create!(
     title_id: title_id,
