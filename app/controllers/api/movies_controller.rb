@@ -4,6 +4,10 @@ class Api::MoviesController < ApplicationController
   require 'openssl'
   require 'json'
   require "google/cloud/language"
+  require 'benchmark' 
+
+  # require 'test_helper'
+  # require 'rails/performance_test_help'
 
 
   def request_similar_titles(url)
@@ -80,15 +84,19 @@ class Api::MoviesController < ApplicationController
   end
 
   def find_unique_moods
+    # Gathering  all moods, 
     @moods = Mood.all
     @titles = []
-  
+    
+    # Isolating and capturing each moods title_id
     @moods.each do |mood|
       @titles << mood.title_id
     end
-  
+    
+    # filtering duplicates
     @uniq_titles = @titles.uniq
     
+    # Isolating and capturing unique moods
     @uniq_moods = []
     @uniq_titles.each do |title_id|
       uniq_mood = Mood.find_by(title_id: title_id)
@@ -98,6 +106,7 @@ class Api::MoviesController < ApplicationController
   end
 
   def find_user_score_range
+    # store the users input range
     @user_score_range = []
       
     positve_limit = @user_input_sentiment_score.to_f + 0.30
@@ -110,76 +119,51 @@ class Api::MoviesController < ApplicationController
   def find_entity_match
     find_unique_moods()
     
+    # create variables to store matches and their entities
     @title_entities = []
     @entity_match = []
     p @user_input_entities
+    # iterate @uniq_titles
     @uniq_titles.each do |title|
+      # assign boolean value
       match = false
+      # create varible to print info outside the loop
       et = title
+      # Capture the titles entities
       @title_entities = Entity.where(title_id: title)
       p @title_entities.count
+      # iterate through the titles entities
       @title_entities.each do |entity|
         # p et
+        # assign var to p outside loop
         et = entity.entity_name
+        # iterate through user's entities
         @user_input_entities.each do |user_entity|
           # p "#{user_entity[:name]} == #{entity.entity_name} = ?"
+          # assign var to particular user entity to p out of loop
           @u_e_n = user_entity[:name]
+          # Compare user entity and title entity
           if user_entity[:name] ==  entity.entity_name
             p "#{user_entity[:name]} == #{entity.entity_name} = Match!!!!!!"
+            # trigger consequent conditional 
             match = true
           end
           # p match
         end
+        #  add only matches
         if match == true
           p "#{@u_e_t} == #{et} = Match!!!!!!"
+          # array of titles from matches
           @entity_match << entity.title_id
         end
-        # p "Line: 135 - @entity_match: #{@entity_match}"
+        # p "Line: 159 - @entity_match: #{@entity_match}"
       end
     end
 
   end
 
-  def call_similar_movies
-    find_user_score_range()
-    find_entity_match()
+  def generate_similar_movies
 
-    if @entity_match == []
-      selected_title = @user_score_range.sample
-      @title_id = selected_title.title_id
-      title1 = @user_score_range.sample
-      title2 = @user_score_range.sample
-      title3 = @user_score_range.sample
-      title4 = @user_score_range.sample
-      title5 = @user_score_range.sample
-      p "In @user_score_range..."
-    else
-      # selected_title = @entity_match.sample
-      # @title_id = selected_title
-      @titles = []
-      p 'Line: 158 - @entity_match'
-      p "Length: #{@entity_match.length}"
-      p "Content: #{@entity_match}"
-      @unique_titles = @entity_match.uniq
-      p "Line: 162 - @unique_titles: #{@unique_titles}"
-      @number_of_unique_titles = @unique_titles.count
-      @randomly_selected_titles = []
-      i = 0
-      if @unique_titles.count == nil
-        p 'Nil Could return an message here saying no matches found'
-      else
-        while i < @unique_titles.length
-          p "Line: 179 - @unique_titles[i]: #{@unique_titles[i]}"
-          @randomly_selected_titles << @unique_titles[i]
-          i += 1
-          p "Line 202 - @randomly_selected_titles: #{@randomly_selected_titles}"
-        end
-
-      end
-    end
-    # # p selected_title
-    # numbers = [1,2,3,4,5,6,7,8,9,10]
-    # rand = numbers.sample
     index = 0
     @titles_for_overview = []
     p 'Line: 212 - @randomly_selected_titles Length:'
@@ -263,6 +247,54 @@ class Api::MoviesController < ApplicationController
         p "Content: @titles_for_overview - #{@titles_for_overview}"
       end
     end
+  end
+
+  def call_similar_movies
+    find_user_score_range()
+    find_entity_match()
+
+    # could create a sentiment route for when no entity matches user input.
+    if @entity_match == []
+      @randomly_selected_titles = []
+      @user_score_range.each do |mood|
+        @randomly_selected_titles << mood.title_id
+      end
+
+      generate_similar_movies()
+      
+      p "In @user_score_range..."
+    else
+      # selected_title = @entity_match.sample
+      # @title_id = selected_title
+      @titles = []
+      p 'Line: 178 - @entity_match'
+      p "Length: #{@entity_match.length}"
+      p "Content: #{@entity_match}"
+      @unique_titles = @entity_match.uniq
+      p "Line: 182 - @unique_titles: #{@unique_titles}"
+      @number_of_unique_titles = @unique_titles.count
+      @randomly_selected_titles = []
+      i = 0
+      if @unique_titles.count == nil
+        p 'Nil Could return an message here saying no matches found'
+      else
+        while i < @unique_titles.length
+          p "Line: 190 - @unique_titles[i]: #{@unique_titles[i]}"
+          @randomly_selected_titles << @unique_titles[i]
+          i += 1
+          p "Line 193 - @randomly_selected_titles: #{@randomly_selected_titles}"
+        end
+
+      end
+      generate_similar_movies()
+    end
+    # # p selected_title
+    # numbers = [1,2,3,4,5,6,7,8,9,10]
+    # rand = numbers.sample
+    
+
+
+    
     
     # @title1 = title1
     # @title2 = title2
@@ -306,14 +338,21 @@ class Api::MoviesController < ApplicationController
   end
 
   def index
-   
     call_sentiment(params[:user_input])
-    
-    call_entity(params[:user_input])
 
-    call_overview()
+  
+    call_entity(params[:user_input])
+  
+    overview = Benchmark.measure { 
+      call_overview()}
+    # call_overview()
+
+
 
     render 'index.json.jb'
+    p overview
+    p @uniq_titles.count
+
   end
   
   

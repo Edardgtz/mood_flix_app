@@ -46,3 +46,5 @@ gem 'unirest'
 
 gem 'google-cloud-language'
 gem 'sentimental'
+gem 'benchmark'
+gem 'ruby-prof'

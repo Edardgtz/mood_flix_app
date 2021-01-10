@@ -58,6 +58,7 @@ GEM
       zeitwerk (~> 2.2, >= 2.2.2)
     addressable (2.7.0)
       public_suffix (>= 2.0.2, < 5.0)
+    benchmark (0.1.1)
     bindex (0.8.1)
     bootsnap (1.5.1)
       msgpack (~> 1.0)
@@ -205,6 +206,7 @@ GEM
       http-cookie (>= 1.0.2, < 2.0)
       mime-types (>= 1.16, < 4.0)
       netrc (~> 0.8)
+    ruby-prof (1.4.2)
     ruby2_keywords (0.0.2)
     sass-rails (6.0.0)
       sassc-rails (~> 2.1, >= 2.1.1)
@@ -255,6 +257,7 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
+  benchmark
   bootsnap (>= 1.4.2)
   byebug
   google-cloud-language
@@ -266,6 +269,7 @@ DEPENDENCIES
   puma (~> 4.1)
   rack-cors
   rails (~> 6.0.3, >= 6.0.3.4)
+  ruby-prof
   sass-rails (>= 6)
   sentimental
   tzinfo-data
