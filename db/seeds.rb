@@ -246,17 +246,27 @@ def imdb_dataset
   titles = []
   summaries = []
   movies.each do |movie|
-    if movie[0] != 'imdb_title_id'
-      call_entity(movie[13])
-      @title_entities.each do |entity|
-        new_entity = Entity.create!(
-          title_id: movie[0], 
-          entity_name: entity[:name],
-          entity_type: entity[:type]
-        )
-        p new_entity
+    p movie[0]
+    dup = Entity.where(title_id: movie[0])
+    # p dup.count
+    if movie[0] != 'imdb_title_id' && dup.count == 0
+      p dup.count
+      p movie[0]
+      p movie[13]
+      if movie[13] != nil
+        call_entity(movie[13])
+        @title_entities.each do |entity|
+          p entity
+          new_entity = Entity.create!(
+            title_id: movie[0], 
+            entity_name: entity[:name],
+            entity_type: entity[:type]
+          )
+          p new_entity
+        end
       end
     end
+
   end
   p titles.count
   p summaries[0]
