@@ -183,7 +183,7 @@ def seed_entities
   end
 end
 
-seed_entities()
+# seed_entities()
 
 
 def create_mood(title_id, sentiment_score)
@@ -236,3 +236,31 @@ def seed_unique_top_rated_titles
 end
 
 # seed_unique_top_rated_titles()
+
+
+def imdb_dataset
+  require 'csv'
+  movies = CSV.read('/Users/eduardogutierrez/Desktop/Actualize/cap_stone/mood_flix_app/app/assets/datasets/imdb_movies.csv')
+  # p movies[1]
+  p movies.count
+  titles = []
+  summaries = []
+  movies.each do |movie|
+    if movie[0] != 'imdb_title_id'
+      call_entity(movie[13])
+      @title_entities.each do |entity|
+        new_entity = Entity.create!(
+          title_id: movie[0], 
+          entity_name: entity[:name],
+          entity_type: entity[:type]
+        )
+        p new_entity
+      end
+    end
+  end
+  p titles.count
+  p summaries[0]
+
+end
+
+imdb_dataset()

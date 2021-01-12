@@ -288,19 +288,7 @@ class Api::MoviesController < ApplicationController
       end
       generate_similar_movies()
     end
-    # # p selected_title
-    # numbers = [1,2,3,4,5,6,7,8,9,10]
-    # rand = numbers.sample
-    
-
-
-    
-    
-    # @title1 = title1
-    # @title2 = title2
-    # @title3 = title3
-    # @title4 = title4
-    # @title5 = title5
+  
   end 
 
   def call_overview
