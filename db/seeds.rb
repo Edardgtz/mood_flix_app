@@ -128,13 +128,18 @@ end
 # filter_out_duplicate_titles()
 
 def find_unique_title_ids
-  mood = Mood.where(id: 2501..2647)
-  @uniq_mood_titles = []
+  mood = Mood.all
+  @uniq_titles = []
   mood.each do |mood|
-    @uniq_mood_titles << mood.title_id
+    @uniq_titles << mood.title_id
   end
-  p @uniq_mood_titles.length
-  p @uniq_mood_titles
+  p 'before line 139 @uniq_titles.length and array'
+  p @uniq_titles.length
+  p @uniq_titles
+  @uniq_titles = @uniq_titles.uniq
+  p 'after line 139'
+  p @uniq_titles.length
+  p @uniq_titles
 end
 
 # find_unique_title_ids()
@@ -144,7 +149,7 @@ def seed_entities
   # filter_out_duplicate_titles()
   find_unique_title_ids()
 
-  @uniq_mood_titles.each do |mood|
+  @uniq_titles.each do |mood|
     p mood
     call_imdb("https://imdb8.p.rapidapi.com/title/get-plots?tconst=#{mood}")
     @plots = @results
@@ -273,4 +278,35 @@ def imdb_dataset
 
 end
 
-imdb_dataset()
+# imdb_dataset()
+
+def add_genre_to_entities
+  find_unique_title_ids()
+  # p @uniq_titles[0]
+  # call_imdb("https://imdb8.p.rapidapi.com/title/get-overview-details?tconst=#{@uniq_titles[0]}&currentCountry=US")
+  # p @results['genres']
+  
+  @uniq_titles.each do |title|
+    call_imdb("https://imdb8.p.rapidapi.com/title/get-overview-details?tconst=#{title}&currentCountry=US")
+    i = 0
+    while i < @results['genres'].length
+      p @results['genres'][i]
+      if @results != nil && @results['genres'] != nil
+        call_entity(@results['genres'][i])
+        @title_entities.each do |entity|
+          new_entity = Entity.create!(
+            title_id: title, 
+            entity_name: entity[:name],
+            entity_type: entity[:type]
+          )
+          p new_entity
+        end
+      end
+      i += 1
+    end
+
+  end
+
+end
+
+# add_genre_to_entities()

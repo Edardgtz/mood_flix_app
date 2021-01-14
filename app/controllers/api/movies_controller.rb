@@ -122,7 +122,7 @@ class Api::MoviesController < ApplicationController
     # create variables to store matches and their entities
     @title_entities = []
     @entity_match = []
-    p @user_input_entities
+    # p @user_input_entities
     # iterate @uniq_titles
     @uniq_titles.each do |title|
       # assign boolean value
@@ -141,10 +141,10 @@ class Api::MoviesController < ApplicationController
         @user_input_entities.each do |user_entity|
           # p "#{user_entity[:name]} == #{entity.entity_name} = ?"
           # assign var to particular user entity to p out of loop
-          @u_e_n = user_entity[:name]
+          @u_e_t = user_entity[:name]
           # Compare user entity and title entity
           if user_entity[:name] ==  entity.entity_name
-            p "#{user_entity[:name]} == #{entity.entity_name} = Match!!!!!!"
+            # p "#{user_entity[:name]} == #{entity.entity_name} = Match!!!!!!"
             # trigger consequent conditional 
             match = true
           end
@@ -152,7 +152,7 @@ class Api::MoviesController < ApplicationController
         end
         #  add only matches
         if match == true
-          p "#{@u_e_t} == #{et} = Match!!!!!!"
+          # p "#{@u_e_t} == #{et} = Match!!!!!!"
           # array of titles from matches
           @entity_match << entity.title_id
         end
@@ -166,17 +166,17 @@ class Api::MoviesController < ApplicationController
 
     index = 0
     @titles_for_overview = []
-    p 'Line: 212 - @randomly_selected_titles Length:'
-    p  @randomly_selected_titles.length
+    # p 'Line: 212 - @randomly_selected_titles Length:'
+    # p  @randomly_selected_titles.length
     
-    p "Line: 215 - @titles_for_overview.count = #{@titles_for_overview.count}"
+    # p "Line: 215 - @titles_for_overview.count = #{@titles_for_overview.count}"
     counter = 0
     @randomly_selected_titles.each do |title|
       if counter == 5
         break
       else
-        p 'LIne: 227 - @randomly_selected_titles => title:'
-        p title
+        # p 'LIne: 227 - @randomly_selected_titles => title:'
+        # p title
 
         request_similar_titles("https://movies-tvshows-data-imdb.p.rapidapi.com/?type=get-similar-movies&imdb=#{title}")
         
@@ -195,21 +195,21 @@ class Api::MoviesController < ApplicationController
         zero_to_ninteen.delete_if {|number| number == rand4 }
         rand5 = zero_to_ninteen.sample
         zero_to_ninteen.delete_if {|number| number == rand5 }
-        rand6 = zero_to_ninteen.sample
-        zero_to_ninteen.delete_if {|number| number == rand6 }
-        rand7 = zero_to_ninteen.sample
-        zero_to_ninteen.delete_if {|number| number == rand7 }
-        rand8 = zero_to_ninteen.sample
-        zero_to_ninteen.delete_if {|number| number == rand8 }
-        rand9 = zero_to_ninteen.sample
-        zero_to_ninteen.delete_if {|number| number == rand9 }
-        rand10 = zero_to_ninteen.sample
-        zero_to_ninteen.delete_if {|number| number == rand10 }
+        # rand6 = zero_to_ninteen.sample
+        # zero_to_ninteen.delete_if {|number| number == rand6 }
+        # rand7 = zero_to_ninteen.sample
+        # zero_to_ninteen.delete_if {|number| number == rand7 }
+        # rand8 = zero_to_ninteen.sample
+        # zero_to_ninteen.delete_if {|number| number == rand8 }
+        # rand9 = zero_to_ninteen.sample
+        # zero_to_ninteen.delete_if {|number| number == rand9 }
+        # rand10 = zero_to_ninteen.sample
+        # zero_to_ninteen.delete_if {|number| number == rand10 }
 
-        p 'Line: 248 - zero_to_ninteen:'
-        p zero_to_ninteen
+        # p 'Line: 248 - zero_to_ninteen:'
+        # p zero_to_ninteen
         # @titles_for_overview << title
-        p @titles_for_overview
+        # p @titles_for_overview
         if @parsed_movie && @parsed_movie['movie_results'] && @parsed_movie['movie_results'][rand1] && @parsed_movie['movie_results'][rand1]['imdb_id'] != [] && @parsed_movie['movie_results'][rand1]['imdb_id'] != nil
           @titles_for_overview << @parsed_movie['movie_results'][rand1]['imdb_id']
         end
@@ -225,26 +225,26 @@ class Api::MoviesController < ApplicationController
         if @parsed_movie && @parsed_movie['movie_results'] && @parsed_movie['movie_results'][rand5] && @parsed_movie['movie_results'][rand5]['imdb_id'] != [] && @parsed_movie['movie_results'][rand5]['imdb_id'] != nil
           @titles_for_overview << @parsed_movie['movie_results'][rand5]['imdb_id']
         end
-        if @parsed_movie && @parsed_movie['movie_results'] && @parsed_movie['movie_results'][rand6] && @parsed_movie['movie_results'][rand6]['imdb_id'] != [] && @parsed_movie['movie_results'][rand6]['imdb_id'] != nil
-          @titles_for_overview << @parsed_movie['movie_results'][rand6]['imdb_id']
-        end
-        if @parsed_movie && @parsed_movie['movie_results'] && @parsed_movie['movie_results'][rand7] && @parsed_movie['movie_results'][rand7]['imdb_id'] != [] && @parsed_movie['movie_results'][rand7]['imdb_id'] != nil
-          @titles_for_overview << @parsed_movie['movie_results'][rand7]['imdb_id']
-        end
-        if @parsed_movie && @parsed_movie['movie_results'] && @parsed_movie['movie_results'][rand8] && @parsed_movie['movie_results'][rand8]['imdb_id'] != [] && @parsed_movie['movie_results'][rand8]['imdb_id'] != nil
-          @titles_for_overview << @parsed_movie['movie_results'][rand8]['imdb_id']
-        end
-        if @parsed_movie && @parsed_movie['movie_results'] && @parsed_movie['movie_results'][rand9] && @parsed_movie['movie_results'][rand9]['imdb_id'] != [] && @parsed_movie['movie_results'][rand9]['imdb_id'] != nil
-          @titles_for_overview << @parsed_movie['movie_results'][rand9]['imdb_id']
-        end
-        if @parsed_movie && @parsed_movie['movie_results'] && @parsed_movie['movie_results'][rand10] && @parsed_movie['movie_results'][rand10]['imdb_id'] != [] && @parsed_movie['movie_results'][rand10]['imdb_id'] != nil
-          @titles_for_overview << @parsed_movie['movie_results'][rand10]['imdb_id']
-        end
+        # if @parsed_movie && @parsed_movie['movie_results'] && @parsed_movie['movie_results'][rand6] && @parsed_movie['movie_results'][rand6]['imdb_id'] != [] && @parsed_movie['movie_results'][rand6]['imdb_id'] != nil
+        #   @titles_for_overview << @parsed_movie['movie_results'][rand6]['imdb_id']
+        # end
+        # if @parsed_movie && @parsed_movie['movie_results'] && @parsed_movie['movie_results'][rand7] && @parsed_movie['movie_results'][rand7]['imdb_id'] != [] && @parsed_movie['movie_results'][rand7]['imdb_id'] != nil
+        #   @titles_for_overview << @parsed_movie['movie_results'][rand7]['imdb_id']
+        # end
+        # if @parsed_movie && @parsed_movie['movie_results'] && @parsed_movie['movie_results'][rand8] && @parsed_movie['movie_results'][rand8]['imdb_id'] != [] && @parsed_movie['movie_results'][rand8]['imdb_id'] != nil
+        #   @titles_for_overview << @parsed_movie['movie_results'][rand8]['imdb_id']
+        # end
+        # if @parsed_movie && @parsed_movie['movie_results'] && @parsed_movie['movie_results'][rand9] && @parsed_movie['movie_results'][rand9]['imdb_id'] != [] && @parsed_movie['movie_results'][rand9]['imdb_id'] != nil
+        #   @titles_for_overview << @parsed_movie['movie_results'][rand9]['imdb_id']
+        # end
+        # if @parsed_movie && @parsed_movie['movie_results'] && @parsed_movie['movie_results'][rand10] && @parsed_movie['movie_results'][rand10]['imdb_id'] != [] && @parsed_movie['movie_results'][rand10]['imdb_id'] != nil
+        #   @titles_for_overview << @parsed_movie['movie_results'][rand10]['imdb_id']
+        # end
         index += 1
         counter = counter + 1
-        p "line: 287"
-        p "Length: @titles_for_overview - #{@titles_for_overview.length}"
-        p "Content: @titles_for_overview - #{@titles_for_overview}"
+        # p "line: 287"
+        # p "Length: @titles_for_overview - #{@titles_for_overview.length}"
+        # p "Content: @titles_for_overview - #{@titles_for_overview}"
       end
     end
   end
@@ -262,16 +262,16 @@ class Api::MoviesController < ApplicationController
 
       generate_similar_movies()
       
-      p "In @user_score_range..."
+      # p "In @user_score_range..."
     else
       # selected_title = @entity_match.sample
       # @title_id = selected_title
       @titles = []
-      p 'Line: 178 - @entity_match'
-      p "Length: #{@entity_match.length}"
-      p "Content: #{@entity_match}"
+      # p 'Line: 178 - @entity_match'
+      # p "Length: #{@entity_match.length}"
+      # p "Content: #{@entity_match}"
       @unique_titles = @entity_match.uniq
-      p "Line: 182 - @unique_titles: #{@unique_titles}"
+      # p "Line: 182 - @unique_titles: #{@unique_titles}"
       @number_of_unique_titles = @unique_titles.count
       @randomly_selected_titles = []
       i = 0
@@ -279,35 +279,38 @@ class Api::MoviesController < ApplicationController
         p 'Nil Could return an message here saying no matches found'
       else
         while i < @unique_titles.length
-          p "Line: 190 - @unique_titles[i]: #{@unique_titles[i]}"
+          # p "Line: 190 - @unique_titles[i]: #{@unique_titles[i]}"
           @randomly_selected_titles << @unique_titles[i]
           i += 1
-          p "Line 193 - @randomly_selected_titles: #{@randomly_selected_titles}"
+          # p "Line 193 - @randomly_selected_titles: #{@randomly_selected_titles}"
         end
-
+        generate_similar_movies()
       end
-      generate_similar_movies()
     end
   
   end 
 
   def call_overview
-    call_similar_movies()
+    # call_similar_movies()
+    find_entity_match()
+    # p @entity_match
 
-    titles = @titles_for_overview
-
+    # titles = @titles_for_overview
+    titles = @entity_match.uniq
+    # p  titles
     # titles = [@title1, @title2, @title3, @title4, @title5]
-    p "Line: 341 - Unshuffled titles => #{titles}"
-    titles = @titles_for_overview.shuffle
-    titles = titles.uniq
-    p "Line: 343 - Shuffled titles => #{titles}"
+    # p "Line: 341 - Unshuffled titles => #{titles}"
+    # titles = @titles_for_overview.shuffle
+    titles = titles.shuffle
+
+    # p "Line: 343 - Shuffled titles => #{titles}"
     @parsed_overview_movies = []
     # p titles
     i = 0
     while i < titles.length
       # random = rand(0..titles.length)
       if titles[i] != nil && titles[i] != 0
-        p titles[i]
+        # p titles[i]
         request_overview_details("https://imdb8.p.rapidapi.com/title/get-overview-details?tconst=#{titles[i]}&currentCountry=US")
 
         parsed_results = JSON.parse(@results)
