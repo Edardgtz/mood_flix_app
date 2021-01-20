@@ -218,6 +218,9 @@ GEM
       sprockets (> 3.0)
       sprockets-rails
       tilt
+    seed_dump (3.3.1)
+      activerecord (>= 4)
+      activesupport (>= 4)
     sentimental (1.5.0)
     signet (0.14.0)
       addressable (~> 2.3)
@@ -272,6 +275,7 @@ DEPENDENCIES
   rails (~> 6.0.3, >= 6.0.3.4)
   ruby-prof
   sass-rails (>= 6)
+  seed_dump
   sentimental
   smarter_csv
   tzinfo-data
