@@ -338,8 +338,7 @@ class Api::MoviesController < ApplicationController
       call_overview()}
     # call_overview()
 
-
-
+    p Rails.root
     render 'index.json.jb'
     p overview
     p @uniq_titles.count
