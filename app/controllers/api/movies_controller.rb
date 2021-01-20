@@ -6,8 +6,7 @@ class Api::MoviesController < ApplicationController
   require "google/cloud/language"
   require 'benchmark' 
 
-  # require 'test_helper'
-  # require 'rails/performance_test_help'
+
 
 
   def request_similar_titles(url)
