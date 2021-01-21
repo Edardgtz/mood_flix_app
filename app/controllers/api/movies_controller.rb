@@ -305,7 +305,7 @@ class Api::MoviesController < ApplicationController
 
     # p "Line: 343 - Shuffled titles => #{titles}"
     @parsed_overview_movies = []
-    # p titles
+    
     i = 0
     while i < titles.length
       # random = rand(0..titles.length)
@@ -337,7 +337,7 @@ class Api::MoviesController < ApplicationController
     overview = Benchmark.measure { 
       call_overview()}
     # call_overview()
-    
+
     render 'index.json.jb'
     p overview
     p @uniq_titles.count
