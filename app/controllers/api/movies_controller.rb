@@ -7,8 +7,6 @@ class Api::MoviesController < ApplicationController
   require 'benchmark' 
 
   
-  # require 'rails/performance_test_help'
-
 
   def request_similar_titles(url)
     url = URI(url)
