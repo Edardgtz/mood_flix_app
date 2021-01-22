@@ -174,7 +174,7 @@ class Api::MoviesController < ApplicationController
         break
       else
         # p 'LIne: 227 - @randomly_selected_titles => title:'
-        # p title
+        # pp title
 
         request_similar_titles("https://movies-tvshows-data-imdb.p.rapidapi.com/?type=get-similar-movies&imdb=#{title}")
         
