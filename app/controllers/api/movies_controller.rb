@@ -337,9 +337,6 @@ class Api::MoviesController < ApplicationController
     call_overview()
 
     render 'index.json.jb'
-    # p overview
-    
-
   end
   
   
