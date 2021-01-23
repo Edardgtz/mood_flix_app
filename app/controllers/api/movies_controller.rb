@@ -308,7 +308,7 @@ class Api::MoviesController < ApplicationController
     while i < titles.length
   
       if titles[i] != nil && titles[i] != 0
-        p titles[i]
+        # p titles[i]
         request_overview_details("https://imdb8.p.rapidapi.com/title/get-overview-details?tconst=#{titles[i]}&currentCountry=US").delay
 
         parsed_results = JSON.parse(@results)
