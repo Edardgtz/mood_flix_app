@@ -306,7 +306,7 @@ class Api::MoviesController < ApplicationController
     
     i = 0
     while i < titles.length
-      # random = rand(0..titles.length)
+  
       if titles[i] != nil && titles[i] != 0
         p titles[i]
         request_overview_details("https://imdb8.p.rapidapi.com/title/get-overview-details?tconst=#{titles[i]}&currentCountry=US").delay
