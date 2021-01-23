@@ -327,14 +327,14 @@ class Api::MoviesController < ApplicationController
   end
 
   def index
-    call_sentiment(params[:user_input])
+    # call_sentiment(params[:user_input])
 
   
     call_entity(params[:user_input])
   
-    overview = Benchmark.measure { 
-      call_overview()}
-    # call_overview()
+    # overview = Benchmark.measure { 
+      # call_overview()}
+    call_overview()
 
     render 'index.json.jb'
     p overview
