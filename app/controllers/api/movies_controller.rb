@@ -311,7 +311,7 @@ class Api::MoviesController < ApplicationController
         # p titles[i]
         request_overview_details("https://imdb8.p.rapidapi.com/title/get-overview-details?tconst=#{titles[i]}&currentCountry=US").delay
 
-        parsed_results = JSON.parse(@results).delay
+        parsed_results = JSON.parse(@results)
 
         if parsed_results && parsed_results['certificates'] && parsed_results['certificates']['US'] && parsed_results['certificates']['US'][0] && parsed_results['certificates']['US'][0]['ratingReason'] && parsed_results['certificates']['US'][0]['ratingReason'] != []
           @parsed_overview_movies << parsed_results
