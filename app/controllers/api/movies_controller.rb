@@ -8,20 +8,7 @@ class Api::MoviesController < ApplicationController
 
   
 
-  def request_similar_titles(url)
-    url = URI(url)
-
-    http = Net::HTTP.new(url.host, url.port)
-    http.use_ssl = true
-    http.verify_mode = OpenSSL::SSL::VERIFY_NONE
-
-    request = Net::HTTP::Get.new(url)
-    request["x-rapidapi-key"] = "#{Rails.application.credentials.imdb_api[:api_key]}"
-    request["x-rapidapi-host"] = 'movies-tvshows-data-imdb.p.rapidapi.com'
-
-    response = http.request(request)
-    @results = response.read_body
-  end
+  
 
   def request_overview_details(url)
     url = URI(url)
@@ -38,26 +25,7 @@ class Api::MoviesController < ApplicationController
     @results = response.read_body
   end
   
-  def call_sentiment(text_content)
-    
-    language = Google::Cloud::Language.language_service
-
-    document = { content: text_content, type: :PLAIN_TEXT }
-    response = language.analyze_sentiment document: document
-
-    sentiment = response.document_sentiment
-
-    # puts "Overall document sentiment: (#{sentiment.score})"
-    # puts "Sentence level sentiment:"
-
-    sentences = response.sentences
-
-    sentences.each do |sentence|
-      sentiment = sentence.sentiment
-      @user_input_sentiment_score = "#{sentiment.score}"
-      # {sentence.text.content}: 
-    end
-  end
+  
 
   def call_entity(text_content)
     @user_input_entities = []
@@ -103,16 +71,7 @@ class Api::MoviesController < ApplicationController
     # p @uniq_moods
   end
 
-  def find_user_score_range
-    # store the users input range
-    @user_score_range = []
-      
-    positve_limit = @user_input_sentiment_score.to_f + 0.30
-    
-    negative_limit = @user_input_sentiment_score.to_f - 0.30
-
-    @user_score_range = Mood.where(sentiment_score: negative_limit..positve_limit)
-  end
+  
 
   def find_entity_match
     find_unique_moods()
@@ -160,133 +119,9 @@ class Api::MoviesController < ApplicationController
 
   end
 
-  def generate_similar_movies
-
-    index = 0
-    @titles_for_overview = []
-    # p 'Line: 212 - @randomly_selected_titles Length:'
-    # p  @randomly_selected_titles.length
-    
-    # p "Line: 215 - @titles_for_overview.count = #{@titles_for_overview.count}"
-    counter = 0
-    @randomly_selected_titles.each do |title|
-      if counter == 5
-        break
-      else
-        # p 'LIne: 227 - @randomly_selected_titles => title:'
-        # pp title
-
-        request_similar_titles("https://movies-tvshows-data-imdb.p.rapidapi.com/?type=get-similar-movies&imdb=#{title}")
-        
-        @parsed_movie = JSON.parse(@results)
-
-        # pp @parsed_movie
-        zero_to_ninteen = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19]
-      
-        rand1 = zero_to_ninteen.sample
-        zero_to_ninteen.delete_if {|number| number == rand1 }
-        rand2 = zero_to_ninteen.sample
-        zero_to_ninteen.delete_if {|number| number == rand2 }
-        rand3 = zero_to_ninteen.sample
-        zero_to_ninteen.delete_if {|number| number == rand3 }
-        rand4 = zero_to_ninteen.sample
-        zero_to_ninteen.delete_if {|number| number == rand4 }
-        rand5 = zero_to_ninteen.sample
-        zero_to_ninteen.delete_if {|number| number == rand5 }
-        # rand6 = zero_to_ninteen.sample
-        # zero_to_ninteen.delete_if {|number| number == rand6 }
-        # rand7 = zero_to_ninteen.sample
-        # zero_to_ninteen.delete_if {|number| number == rand7 }
-        # rand8 = zero_to_ninteen.sample
-        # zero_to_ninteen.delete_if {|number| number == rand8 }
-        # rand9 = zero_to_ninteen.sample
-        # zero_to_ninteen.delete_if {|number| number == rand9 }
-        # rand10 = zero_to_ninteen.sample
-        # zero_to_ninteen.delete_if {|number| number == rand10 }
-
-        # p 'Line: 248 - zero_to_ninteen:'
-        # p zero_to_ninteen
-        # @titles_for_overview << title
-        # p @titles_for_overview
-        if @parsed_movie && @parsed_movie['movie_results'] && @parsed_movie['movie_results'][rand1] && @parsed_movie['movie_results'][rand1]['imdb_id'] != [] && @parsed_movie['movie_results'][rand1]['imdb_id'] != nil
-          @titles_for_overview << @parsed_movie['movie_results'][rand1]['imdb_id']
-        end
-        if @parsed_movie && @parsed_movie['movie_results'] && @parsed_movie['movie_results'][rand2] && @parsed_movie['movie_results'][rand2]['imdb_id'] != [] && @parsed_movie['movie_results'][rand2]['imdb_id'] != nil
-          @titles_for_overview << @parsed_movie['movie_results'][rand2]['imdb_id']
-        end
-        if @parsed_movie && @parsed_movie['movie_results'] && @parsed_movie['movie_results'][rand3] && @parsed_movie['movie_results'][rand3]['imdb_id'] != [] && @parsed_movie['movie_results'][rand3]['imdb_id'] != nil
-          @titles_for_overview << @parsed_movie['movie_results'][rand3]['imdb_id']
-        end
-        if @parsed_movie && @parsed_movie['movie_results'] && @parsed_movie['movie_results'][rand4] && @parsed_movie['movie_results'][rand4]['imdb_id'] != [] && @parsed_movie['movie_results'][rand4]['imdb_id'] != nil
-          @titles_for_overview << @similar_title4
-        end
-        if @parsed_movie && @parsed_movie['movie_results'] && @parsed_movie['movie_results'][rand5] && @parsed_movie['movie_results'][rand5]['imdb_id'] != [] && @parsed_movie['movie_results'][rand5]['imdb_id'] != nil
-          @titles_for_overview << @parsed_movie['movie_results'][rand5]['imdb_id']
-        end
-        # if @parsed_movie && @parsed_movie['movie_results'] && @parsed_movie['movie_results'][rand6] && @parsed_movie['movie_results'][rand6]['imdb_id'] != [] && @parsed_movie['movie_results'][rand6]['imdb_id'] != nil
-        #   @titles_for_overview << @parsed_movie['movie_results'][rand6]['imdb_id']
-        # end
-        # if @parsed_movie && @parsed_movie['movie_results'] && @parsed_movie['movie_results'][rand7] && @parsed_movie['movie_results'][rand7]['imdb_id'] != [] && @parsed_movie['movie_results'][rand7]['imdb_id'] != nil
-        #   @titles_for_overview << @parsed_movie['movie_results'][rand7]['imdb_id']
-        # end
-        # if @parsed_movie && @parsed_movie['movie_results'] && @parsed_movie['movie_results'][rand8] && @parsed_movie['movie_results'][rand8]['imdb_id'] != [] && @parsed_movie['movie_results'][rand8]['imdb_id'] != nil
-        #   @titles_for_overview << @parsed_movie['movie_results'][rand8]['imdb_id']
-        # end
-        # if @parsed_movie && @parsed_movie['movie_results'] && @parsed_movie['movie_results'][rand9] && @parsed_movie['movie_results'][rand9]['imdb_id'] != [] && @parsed_movie['movie_results'][rand9]['imdb_id'] != nil
-        #   @titles_for_overview << @parsed_movie['movie_results'][rand9]['imdb_id']
-        # end
-        # if @parsed_movie && @parsed_movie['movie_results'] && @parsed_movie['movie_results'][rand10] && @parsed_movie['movie_results'][rand10]['imdb_id'] != [] && @parsed_movie['movie_results'][rand10]['imdb_id'] != nil
-        #   @titles_for_overview << @parsed_movie['movie_results'][rand10]['imdb_id']
-        # end
-        index += 1
-        counter = counter + 1
-        # p "line: 287"
-        # p "Length: @titles_for_overview - #{@titles_for_overview.length}"
-        # p "Content: @titles_for_overview - #{@titles_for_overview}"
-      end
-    end
-  end
-
-  def call_similar_movies
-    find_user_score_range()
-    find_entity_match()
-
-    # could create a sentiment route for when no entity matches user input.
-    if @entity_match == []
-      @randomly_selected_titles = []
-      @user_score_range.each do |mood|
-        @randomly_selected_titles << mood.title_id
-      end
-
-      generate_similar_movies()
-      
-      # p "In @user_score_range..."
-    else
-      # selected_title = @entity_match.sample
-      # @title_id = selected_title
-      @titles = []
-      # p 'Line: 178 - @entity_match'
-      # p "Length: #{@entity_match.length}"
-      # p "Content: #{@entity_match}"
-      @unique_titles = @entity_match.uniq
-      # p "Line: 182 - @unique_titles: #{@unique_titles}"
-      @number_of_unique_titles = @unique_titles.count
-      @randomly_selected_titles = []
-      i = 0
-      if @unique_titles.count == nil
-        p 'Nil Could return an message here saying no matches found'
-      else
-        while i < @unique_titles.length
-          # p "Line: 190 - @unique_titles[i]: #{@unique_titles[i]}"
-          @randomly_selected_titles << @unique_titles[i]
-          i += 1
-          # p "Line 193 - @randomly_selected_titles: #{@randomly_selected_titles}"
-        end
-        generate_similar_movies()
-      end
-    end
   
-  end 
+
+  
 
   def call_overview
     # call_similar_movies()
@@ -327,11 +162,7 @@ class Api::MoviesController < ApplicationController
   end
 
   def index
-    # call_sentiment(params[:user_input])
-
-  
     call_entity(params[:user_input])
-  
     # overview = Benchmark.measure { 
       # call_overview()}
     call_overview()
