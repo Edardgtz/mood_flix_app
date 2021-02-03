@@ -93,7 +93,7 @@ class Api::MoviesController < ApplicationController
     # p "Line: 79 - Shuffled titles => #{titles}"
     @parsed_overview_movies = []
     i = 0
-    while i < titles.length.delay
+    while i < titles.length
       if titles[i] != nil && titles[i] != 0
         p titles[i]
         request_overview_details("https://imdb8.p.rapidapi.com/title/get-overview-details?tconst=#{titles[i]}&currentCountry=US").delay
