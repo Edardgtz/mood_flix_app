@@ -8,7 +8,7 @@
     rating: title['certificates']['US'][0]['ratingReason'],
     movie_rating: title['ratings']['rating'],
     genres: title['genres'],
-    plot: title['plotOutline']['text']
+    plot: title['plotSummary']['text']
   }
 end
 

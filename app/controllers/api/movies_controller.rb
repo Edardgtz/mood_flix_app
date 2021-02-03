@@ -6,10 +6,6 @@ class Api::MoviesController < ApplicationController
   require "google/cloud/language"
   require 'benchmark' 
 
-  
-
-  
-
   def request_overview_details(url)
     url = URI(url)
 
@@ -25,8 +21,6 @@ class Api::MoviesController < ApplicationController
     @results = response.read_body
   end
   
-  
-
   def call_entity(text_content)
     @user_input_entities = []
 
@@ -46,115 +40,77 @@ class Api::MoviesController < ApplicationController
 
       # puts "URL: #{entity.metadata['wikipedia_url']}" if entity.metadata["wikipedia_url"]
     end
-   
   end
-
-  def find_unique_moods
-    # Gathering  all moods, 
-    @moods = Mood.all
-    @titles = []
-    
-    # Isolating and capturing each moods title_id
-    @moods.each do |mood|
-      @titles << mood.title_id
-    end
-    
-    # filtering duplicates
-    @uniq_titles = @titles.uniq
-    
-    # Isolating and capturing unique moods
-    @uniq_moods = []
-    @uniq_titles.each do |title_id|
-      uniq_mood = Mood.find_by(title_id: title_id)
-      @uniq_moods << uniq_mood
-    end
-    # p @uniq_moods
-  end
-
-  
 
   def find_entity_match
-    find_unique_moods()
-    
-    # create variables to store matches and their entities
-    @title_entities = []
+    @entity_names = []
+    @user_input_entities.each do |user_entity|
+      user_entity_name = user_entity[:name]
+      @entity_names << user_entity_name
+    end
+
     @entity_match = []
-    # p @user_input_entities
-    # iterate @uniq_titles
-    @uniq_titles.each do |title|
-      # assign boolean value
-      match = false
-      # create varible to print info outside the loop
-      et = title
-      # Capture the titles entities
-      @title_entities = Entity.where(title_id: title)
-      # p @title_entities.count
-      # iterate through the titles entities
-      @title_entities.each do |entity|
-        # p et
-        # assign var to p outside loop
-        et = entity.entity_name
-        # iterate through user's entities
-        @user_input_entities.each do |user_entity|
-          # p "#{user_entity[:name]} == #{entity.entity_name} = ?"
-          # assign var to particular user entity to p out of loop
-          @u_e_t = user_entity[:name]
-          # Compare user entity and title entity
-          if user_entity[:name] ==  entity.entity_name
-            # p "#{user_entity[:name]} == #{entity.entity_name} = Match!!!!!!"
-            # trigger consequent conditional 
-            match = true
-          end
-          # p match
-        end
-        #  add only matches
-        if match == true
-          # p "#{@u_e_t} == #{et} = Match!!!!!!"
-          # array of titles from matches
-          @entity_match << entity.title_id
-        end
-        # p "Line: 159 - @entity_match: #{@entity_match}"
+    @entity_names.each do |name|
+      @entity_matches = Entity.where(entity_name: name)
+      @entity_matches.each do |entity|
+        @entity_match << entity.title_id
       end
     end
 
+    # @entity_match = @entity_match.uniq
+    # matches = []
+    # @entity_match.each do |title|
+    #   counter = 0
+    #   entities = Entity.where(title_id: title)
+    #   entities.each do |entity|
+    #     p entity
+    #     @user_input_entities.each do |user_entity|
+    #       if entity.entity_name == user_entity[:name]
+    #         counter = counter + 1
+    #       end
+    #     end
+    #   end
+    #   matches << {"#{title}": counter}
+    # end
+    # p matches
+    # matches.each do |match|
+
+    # end
+    # p @entity_matches
+    # p @entity_matches.count
+    # p @entity_match.count
   end
 
-  
-
-  
-
   def call_overview
-    # call_similar_movies()
     find_entity_match()
     # p @entity_match
-
-    # titles = @titles_for_overview
     titles = @entity_match.uniq
-    # p  titles
-    # titles = [@title1, @title2, @title3, @title4, @title5]
-    # p "Line: 341 - Unshuffled titles => #{titles}"
+    # p titles
+    # p titles.count
+    # p "Line: 76 - Unshuffled titles => #{titles}"
     # titles = @titles_for_overview.shuffle
     titles = titles.shuffle
-
-    # p "Line: 343 - Shuffled titles => #{titles}"
+    # p "Line: 79 - Shuffled titles => #{titles}"
     @parsed_overview_movies = []
-    
     i = 0
     while i < titles.length
-  
       if titles[i] != nil && titles[i] != 0
-        # p titles[i]
+        p titles[i]
         request_overview_details("https://imdb8.p.rapidapi.com/title/get-overview-details?tconst=#{titles[i]}&currentCountry=US").delay
 
         parsed_results = JSON.parse(@results)
-
-        if parsed_results && parsed_results['certificates'] && parsed_results['certificates']['US'] && parsed_results['certificates']['US'][0] && parsed_results['certificates']['US'][0]['ratingReason'] && parsed_results['certificates']['US'][0]['ratingReason'] != []
+        # p parsed_results
+        if parsed_results && parsed_results['certificates'] && parsed_results['certificates']['US'] && parsed_results['certificates']['US'][0] && parsed_results['certificates']['US'][0]['ratingReason'] && parsed_results['plotSummary']
+          # p parsed_results
           @parsed_overview_movies << parsed_results
         end
+        # p @parsed_overview_movies.count
         if @parsed_overview_movies.length == 10
+          # p @parsed_overview_movies
           break
         end
         i += 1
+        # Write logic to delete mood and entities for titles that do not display properly here
       else
         i += 1
       end
@@ -166,8 +122,7 @@ class Api::MoviesController < ApplicationController
     # overview = Benchmark.measure { 
       # call_overview()}
     call_overview()
-
-    render 'index.json.jb'
+    render 'index.json.jb' 
   end
   
   
