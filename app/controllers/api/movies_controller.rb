@@ -89,7 +89,9 @@ class Api::MoviesController < ApplicationController
     # p titles.count
     # p "Line: 76 - Unshuffled titles => #{titles}"
     # titles = @titles_for_overview.shuffle
-    titles = titles.shuffle
+    5.times do
+      titles = titles.shuffle
+    end
     # p "Line: 79 - Shuffled titles => #{titles}"
     @parsed_overview_movies = []
     i = 0
@@ -103,6 +105,12 @@ class Api::MoviesController < ApplicationController
         if parsed_results && parsed_results['certificates'] && parsed_results['certificates']['US'] && parsed_results['certificates']['US'][0] && parsed_results['certificates']['US'][0]['ratingReason'] && parsed_results['plotSummary']
           # p parsed_results
           @parsed_overview_movies << parsed_results
+        else
+          # Write logic to delete entities for titles that do not display properly here
+          entity = Entity.where(title_id: titles[i])
+          entity.each do |ent_1|
+            entity.destroy(ent_1.id)
+          end
         end
         # p @parsed_overview_movies.count
         if @parsed_overview_movies.length == 10
@@ -110,7 +118,7 @@ class Api::MoviesController < ApplicationController
           break
         end
         i += 1
-        # Write logic to delete mood and entities for titles that do not display properly here
+        
       else
         i += 1
       end

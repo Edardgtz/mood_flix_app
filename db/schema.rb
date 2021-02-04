@@ -38,11 +38,4 @@ ActiveRecord::Schema.define(version: 2021_01_22_173832) do
     t.datetime "updated_at", precision: 6, null: false
   end
 
-  create_table "moods", force: :cascade do |t|
-    t.string "title_id"
-    t.datetime "created_at", precision: 6, null: false
-    t.datetime "updated_at", precision: 6, null: false
-    t.decimal "sentiment_score", precision: 20, scale: 15
-  end
-
 end
