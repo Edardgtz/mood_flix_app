@@ -113,7 +113,7 @@ class Api::MoviesController < ApplicationController
           end
         end
         # p @parsed_overview_movies.count
-        if @parsed_overview_movies.length == 10
+        if @parsed_overview_movies.length == 5
           # p @parsed_overview_movies
           break
         end
@@ -127,10 +127,10 @@ class Api::MoviesController < ApplicationController
 
   def index
     call_entity(params[:user_input])
-    # overview = Benchmark.measure { 
-      # call_overview()}
-    call_overview()
+    overview = Benchmark.measure {call_overview()}
+    # call_overview()
     render 'index.json.jb' 
+    p overview
   end
   
   
